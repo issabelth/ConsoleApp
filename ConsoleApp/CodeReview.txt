@@ -1,0 +1,50 @@
+1. Zrobiłeś literówkę w nazwie pliku. Zamiast na sztywno podawać tę nazwę w kodzie lepiej będzie dać użytkownikowi opcję podania ścieżki do pliku bezpośrednio w konsolówce. Nie będziesz musiał za każdym razem zmieniać kodu w razie, gdybyś chciał zaimportować kolejny plik.
+
+a) Warto też sprawdzać, czy podana ścieżka istnieje, żeby nie wywalało aplikacji w razie podania błędnej.
+
+b) Plik z projektu możesz usunąć, aby nie był w nim na sztywno zapisany. Wystarczy, że podasz jakąkolwiek ścieżkę u siebie na komputerze, nie musisz mieć pliku w projekcie.
+
+2. Niepotrzebne usingi z każdej klasy możesz wyrzucić (te, które pojawiają się na szaro są nieużywane).
+
+3. W funkcji ImportAndPrintData() masz zdefiniowany parametr printData = true, który nigdy nie jest używany. Jeśli go nie potrzebujesz, bo dane zawsze mają być wyświetlane, to go usuń. Ale powiedzmy, że w zależności od niego chciałeś wyświetlać informacje o zaimportowanych danych lub ich nie wyświetlać, jeśli użytkownik tego nie chce. Wtedy musisz go o to zapytać oraz dać odpowiednie IFy w swojej funkcji (zobacz wszystkie referencje do bool printData).
+
+4. Warto też upewnić się, że plik nie jest otwarty, ponieważ wywali to błąd. Dobrze też zapytać użytkownika, czy spróbować ponownie, zmiast od razu wyłączać aplikację w razie, gdy plik jest zajęty.
+
+5. Z uwagi na pkt 3 i 4 dobrze jest wydzielić metodę do pytania tak/nie do osobnej funkcji, skoro jest używana więcej niż raz. Dodałam dla niej klasę UserOptionsMethods.
+
+6. Wiele razy powtarzasz czyszczenie stringów (Trim(), Replace(...)). W takim przypadku warto dodać sobie metody rozszerzające. Zerknij do folderu ExtensionsMethods, tam dodałam taką metodę, której potem użyłam zamiast powtarzać wiele razy ten sam kod. Dodatkowo najlepiej jest ją używać w SET danego property, aby nie musieć za każdym razem pamiętać używać tej metody przy wpisywaniu danych.
+
+7. Dobrą praktyką jest tworzenie oddzielnych plików dla każdej z klas. Kod jest o wiele bardziej przejrzysty, a poszczególne pliki mniejsze.
+Dodatkowo dobra zasada tworzenia kodu to MVC (Model View Controller). Należy oddzielić model danych od widoków oraz logiki aplikacji na oddzielne projekty. Po takim rozdzieleniu musisz dodać referencję do projektów.
+
+8. Lista importedLines jest całkowicie zbędna. Wystarczy wszystko robić w pętli while, którą dodałeś. Dodawanie dodatkowej listy oraz przechodzenie po niej zajmie tylko pamięć i czas. Wykonuj przechodzenie po kolekcjach jak najmniej razy się da i definiuj jak najmniej zmiennych oraz kolekcji.
+
+10. Unikaj robienia "drzewek" IFów. Staraj się łączyć je w jeden, a zamiast sprawdzania, czy warunek jest spelniony i wtedy wykonywania jakiegoś kodu sprawdź, czy warunek NIE jest spełniony i wtedy wyjdź z funkcji/kontynuuj pętlę.
+
+11. Dodałeś klasę ImportedObjectBaseClass i zdefiniowaleś dwa parapetry- Name oraz Type. Wtedy tego Name nie powinieneś już definiować w klasie dziedziczącej, ponieważ się dubluje.
+
+12. Masz różne typy do importowania- bazy, kolumny i tabele. Warto więc zrobić dla nich oddzielne klasy do importu zamiast robić properties Type. Przy imporcie w zależności od tego, jaki jest typ, od razu utwórz odpowiedni obiekt. Do poszczególnych klas dodawaj tylko te pola, które są potrzebne. Na przykład obiekt Database ma tylko nazwę, więc nie potrzebuje innych danych. W związku z tą zmianą klasa "ogólna" ImportedObject nie będzie Ci już potrzebna, bo będziesz tworzył obiekty konkretnych klas.
+
+13. W klasie dodawaj prywatne pola, do których dostęp do edycji dasz poprzez property. Pozwoli to na lepszą kontrolę nad enkapsulacją. Dla niektórych pól możesz dać dostęp tylko do oczytywania danych, albo tylko do ich zapisu.
+
+14. Pola w klasie ustawiaj takie, jakie mają mieć wartości docelowo. Dla przykładu IsNullable powinno być boolem, nie stringiem. Property ustaw jako bool, a przy wpisywaniu wartości (np. w konstruktorze) zajmij się interpretacją i sprawdzaniem wartości.
+
+15. Zamiast robić NumberOfChildren = 1 + NumberOfChildren rób po prostu NumberOfChildren++. Ale jeszcze lepszą opcją jest zrobienie listy kolumn w obiekcie Table oraz listy tabel w obiekcie Database.
+
+16. Wartości w tabeli odliczamy od 0, nie o 1.
+
+17. Dobrze jest stworzyć konstruktor klasy, w którym będziesz od razu zapisywał dane dla obiektu. Nie trzeba ich później ustawiać z osobna, tylko przy tworzeniu instancji od razu wszystko poustawiasz i o niczym nie zapomnisz.
+
+18. Przy wypisywaniu w konsoli warto używać różnych kolorów czcionki, aby tekst był bardziej przejrzysty.
+
+19. Po zaimportowaniu pliku warto spytać użytkownika, czy nie chce może zaimportwać kolejnego. Dzięki temu nie trzeba będzie restartować aplikacji za każdym razem.
+
+20. Na koniec importu pamiętaj zakończyć streamReader, żeby zwolnić zasoby (plik). Warto to zrobić w bloku FINALLY, aby sę to wykonało nawet, gdy wyrzuci Ci jakiś błąd w którymś miejscu funkcji.
+
+21. Warto zainstalować pakiet DevExpress- jest mnóstwo dodatkowych funkcji ułatwiających pracę (np. UnitOfWork).
+
+22. Dla powtarzających się wartości, które mają być sztywno zdefiniowane warto utworzyć tablicę możliwych opcji lub enum (zobacz klasę Dictionaries). Dzięki temu nie zrobisz nigdy literówki i nie będziesz musiał szukać w kodzie po "database" tylko znajdziesz wszystkie referencje.
+
+23. Warto dać użytkownikowi opcję wpisania rozdzielnika (delimitera) w csv.
+
+24. Fajną opcją będzie też umożliwienie użytkownikowi wybierania przeglądania konkretnych danyh. Nie będzie musiał ręcznie ich przeglądać i analizować w pliku (zobacz klasę ShowImported).
