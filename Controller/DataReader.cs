@@ -4,6 +4,8 @@
     using DevExpress.Xpo;
     using System;
     using System.IO;
+    using System.Linq;
+    using Utilities.ConsoleCommands;
     using Utilities.Exceptions;
     using Utilities.ExtensionsMethods;
     using static Utilities.Dictionaries.Dictionaries;
@@ -35,6 +37,11 @@
                     while (!streamReader.EndOfStream)
                     {
                         var line = streamReader.ReadLine();
+                        
+                        while (line.Count(f => f == delimiter) != 7)
+                        {
+                            line += delimiter;
+                        }
 
                         var values = line.Split(delimiter);
 
