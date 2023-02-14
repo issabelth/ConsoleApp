@@ -1,6 +1,7 @@
 ﻿namespace Controller
 {
     using DataModel;
+    using DataModel.Classes;
     using DevExpress.Xpo;
     using System;
     using System.IO;
@@ -37,8 +38,13 @@
                     while (!streamReader.EndOfStream)
                     {
                         var line = streamReader.ReadLine();
-                        
-                        while (line.Count(f => f == delimiter) != 7)
+
+                        if (string.IsNullOrWhiteSpace(line))
+                        {
+                            continue;
+                        }
+
+                        while (line.Count(f => f == delimiter) != 6)
                         {
                             line += delimiter;
                         }
@@ -52,19 +58,12 @@
 
                         var objectType = values[0].ClearWhiteSpacesAndToLower();
 
-                        try
-                        {
-                            name = values[1];
-                            schemaName = values[2];
-                            parentName = values[3];
-                            parentType = values[4];
-                            dataType = values[5];
-                            isNullable = values[6];
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new WrongDelimiterException("Błąd przy pobieraniu informacji. Być może dałeś zły delimiter?");
-                        }
+                        name = values[1];
+                        schemaName = values[2];
+                        parentName = values[3];
+                        parentType = values[4];
+                        dataType = values[5];
+                        isNullable = values[6];
 
                         AddAdequateObject(
                             name: name,
@@ -74,6 +73,11 @@
                             dataType: dataType,
                             isNullable: isNullable,
                             objectType: objectType);
+                    }
+
+                    if (!_uow.QueryInTransaction<ImportedObjectBaseClass>().Any())
+                    {
+                        throw new WrongDelimiterException($"Nie znaleziono żadnych danych. Czy na pewno podałeś prawidłowy delimiter? ({delimiter})");
                     }
 
                     _infos += InfoMethods.GetInfosAboutDatabases(_uow);
